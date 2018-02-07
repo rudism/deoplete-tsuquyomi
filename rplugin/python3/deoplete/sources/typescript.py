@@ -11,8 +11,6 @@ class Source(Base):
         self.input_pattern = '\.'
         self.is_bytepos = True
         self.rank = 500
-        self.min_pattern_length = 0
-        self.is_debug_enabled = True
 
     def get_complete_position(self, context):
         return self.vim.call('tsuquyomi#complete', 1, 0)
