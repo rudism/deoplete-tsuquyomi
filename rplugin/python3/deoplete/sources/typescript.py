@@ -13,7 +13,10 @@ class Source(Base):
         self.rank = 500
 
     def get_complete_position(self, context):
-        return self.vim.call('tsuquyomi#complete', 1, 0)
+        try:
+            return self.vim.call('tsuquyomi#complete', 1, 0)
+        except:
+            return 0
 
     def gather_candidates(self, context):
         bufpath = context['bufpath']
