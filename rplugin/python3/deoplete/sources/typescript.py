@@ -30,10 +30,20 @@ class Source(Base):
             entries.append(item['name'])
 
         # attach signatures
-        infos = self.vim.call('tsuquyomi#makeCompleteMenu', bufpath, line, offset, entries)
-        for i in range(len(items)):
-            if items[i]['kind'] != 'warning':
-                info = re.sub('^\([^\)]+\) ', '', infos[i])
-                items[i]['info'] = info
+        infos = []
+        try:
+            infos = self.vim.call('tsuquyomi#makeCompleteMenu', bufpath, line, offset, entries)
+        except:
+            infos = []
+
+        if len(infos) == len(entries):
+            for i in range(len(items)):
+                if items[i]['kind'] != 'warning':
+                    # remove kind/type names from signatures
+                    info = re.sub('^\(?'+items[i]['kind']+'\)? ([a-zA-Z0-9]+\.)?', '', infos[i])
+                    items[i]['menu'] = info
+                    # allow preview of method signatures
+                    if items[i]['kind'] == 'method':
+                        items[i]['info'] = info
 
         return items
