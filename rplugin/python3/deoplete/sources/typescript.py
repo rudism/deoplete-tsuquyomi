@@ -32,7 +32,8 @@ class Source(Base):
         # attach signatures
         infos = self.vim.call('tsuquyomi#makeCompleteMenu', bufpath, line, offset, entries)
         for i in range(len(items)):
-            info = re.sub('^\([^\)]+\) ', '', infos[i])
-            items[i]['info'] = info
+            if items[i]['kind'] != 'warning':
+                info = re.sub('^\([^\)]+\) ', '', infos[i])
+                items[i]['info'] = info
 
         return items
