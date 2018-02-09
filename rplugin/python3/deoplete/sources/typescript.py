@@ -25,6 +25,7 @@ class Source(Base):
 
         # get all completions
         completions = []
+        entries = []
         try:
             completions = self.vim.call('tsuquyomi#tsClient#tsCompletions', bufpath, line, offset, 0)
         except:
@@ -33,5 +34,23 @@ class Source(Base):
         for item in completions:
             candidate = {'word': item['name'], 'kind': item['kind']}
             items.append(candidate)
+            if item['kind'] == 'method' or item['kind'] == 'property':
+                entries.append(item['name'])
+
+        infos = []
+        try:
+            infos = self.vim.call('tsuquyomi#makeCompleteMenu', bufpath, line, offset, entries)
+        except:
+            infos = []
+
+        if len(infos) == len(entries):
+            i = 0
+            for item in items:
+                if item['kind'] == 'method' or item['kind'] == 'property':
+                    info = re.sub('^\(?'+items[i]['kind']+'\)? ([a-zA-Z0-9]+\.)?', '', infos[i])
+                    item['menu'] = info
+                    if item['kind'] == 'method':
+                        item['info'] = info
+                    i += 1
 
         return items
